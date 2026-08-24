@@ -9,6 +9,7 @@ let proximoId = 1;
 
 // GET /membros — lista todos os membros cadastrados.
 router.get("/", (req, res) => {
+  res.status(200).json(membros)
   // TODO (Tarefa B): responda com status 200 e o array `membros`.
   res.status(501).json({ erro: "não implementado" });
 });
@@ -20,7 +21,19 @@ router.post("/", (req, res) => {
   //  2. Se faltar nome OU matricula, responda 400.
   //  3. Crie { id: proximoId++, nome, matricula }, adicione em `membros`
   //     e responda 201 com o membro criado.
-  res.status(501).json({ erro: "não implementado" });
+
+  const { nome, matricula } = req.body
+
+  if (!nome || !matricula) {
+    return res.status(400).json({erro: "Nome e matrícula são obrigatórios."})
+  }
+
+  const novoMembro = { id: proximoId++, nome, matricula }
+  membros.push(novoMembro);
+
+  res.status(201).json(novoMembro);
+
+  res.status(501).json({ erro: "não implementado" })
 });
 
 module.exports = router;
