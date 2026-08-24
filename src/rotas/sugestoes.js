@@ -2,17 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 
-// ─── Tarefa C — Sugestões de compra + votação ─────────────────────────────────
-// Armazenamento EM MEMÓRIA (não use banco de dados neste trabalho).
 const sugestoes = [];
 let proximoId = 1;
 
-// GET /sugestoes — lista as sugestões, cada uma com sua contagem de votos.
 router.get("/", (req, res) => {
   try {
 
     res.send(sugestoes);
-    
+
   } catch (e) {
 
     res.status(501).json({ erro: "não implementado" });
@@ -20,10 +17,8 @@ router.get("/", (req, res) => {
   }
 });
 
-// POST /sugestoes — cria uma sugestão { titulo } (TEXTO), começando com 0 votos.
 router.post("/", (req, res) => {
   const sugestao = req.body;
-  console.log(Boolean(sugestao.titulo))
 
   try {
     if (!sugestao.titulo || typeof sugestao.titulo !== "string") {
@@ -34,6 +29,8 @@ router.post("/", (req, res) => {
     sugestao.votos = 0
     proximoId++;
 
+    sugestoes.push(sugestao);
+
     res.status(201).json({ sugestao });
 
   } catch (e) {
@@ -41,20 +38,36 @@ router.post("/", (req, res) => {
     res.status(501).json({ erro: "não implementado" });
 
   }
-  // TODO (Tarefa C):
-  //  1. Leia titulo (texto) de req.body.
-  //  2. Se faltar titulo, responda 400.
-  //  3. Crie { id: proximoId++, titulo, votos: 0 }, adicione em `sugestoes`
-  //     e responda 201 com a sugestão criada.
 });
 
-// POST /sugestoes/voto — registra um voto na sugestão de id informado { id }.
+
 router.post("/voto", (req, res) => {
-  // TODO (Tarefa C):
-  //  1. Leia id de req.body.
-  //  2. Encontre a sugestão com esse id. Se não existir, responda 400.
-  //  3. Incremente votos dessa sugestão e responda 200 com a sugestão atualizada.
-  res.status(501).json({ erro: "não implementado" });
+  const id = req.body.id;
+
+  try {
+    if (!id) {
+      return res.status(400).json({ erro: "ID nulo" });
+    }
+
+    const sugestao = sugestoes.find(sugestao => sugestao.id === id);
+
+    if (!sugestao) {
+      return res.status(400).json({
+        erro: "Não há nenhuma sugestão com tal ID"
+      });
+    }
+
+    sugestao.votos++;
+
+    return res.status(200).json({
+      mensagem: "Voto registrado com sucesso",
+      sugestao
+    });
+
+  } catch (e) {
+    return res.status(501).json({ erro: "não implementado" });
+  }
 });
+
 
 module.exports = router;
