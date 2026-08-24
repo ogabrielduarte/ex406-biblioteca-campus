@@ -40,7 +40,6 @@ router.post("/", (req, res) => {
   }
 });
 
-
 router.post("/voto", (req, res) => {
   const id = req.body.id;
 
@@ -68,6 +67,5 @@ router.post("/voto", (req, res) => {
     return res.status(501).json({ erro: "não implementado" });
   }
 });
-
 
 module.exports = router;
